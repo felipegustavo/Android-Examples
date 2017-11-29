@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ImageView;
 
 import java.io.IOException;
@@ -18,20 +19,28 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected Bitmap doInBackground(Void... params) {
             try {
-                URL url = new URL("http://s2.quickmeme.com/img/37/37d58eec3f40957821ed9704bb747fb74db3dd0a3b657e16a77bfb1840dab7a2.jpg");
+                URL url = new URL("https://eoimages.gsfc.nasa.gov/images/imagerecords/73000/73751/world.topo.bathy.200407.3x21600x10800.jpg");
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.connect();
-                return BitmapFactory.decodeStream(conn.getInputStream());
             } catch (IOException e) {
                 e.printStackTrace();
+                cancel(true);
             }
             return null;
         }
 
         @Override
         protected void onPostExecute(Bitmap bitmap) {
-            ImageView img = (ImageView) findViewById(R.id.imageView);
-            img.setImageBitmap(bitmap);
+            Log.i("DEBUG", "A task terminou.");
+            if (bitmap == null) {
+                ImageView img = (ImageView) findViewById(R.id.imageView);
+                img.setImageBitmap(bitmap);
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            Log.i("DEBUG", "A task foi cancelada.");
         }
     }
 
@@ -39,6 +48,5 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        new DownloadTask().execute();
     }
 }
